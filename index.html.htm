@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحدي الحضارة الإسلامية - أ. سعيد شعبان</title>
+    <style>
+        :root { --primary: #065f46; --accent: #047857; --success: #059669; --danger: #dc2626; --bg: #f0fdf4; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background: #dcfce7; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; padding: 10px; }
+        .main-card { width: 100%; max-width: 600px; background: white; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); border: 4px solid var(--primary); overflow: hidden; }
+        .top-nav-bar { background: linear-gradient(135deg, var(--primary), #10b981); color: white; padding: 20px; text-align: center; font-size: 20px; font-weight: bold; border-bottom: 3px solid var(--accent); }
+        .content { padding: 30px; text-align: center; }
+        .teacher-img { width: 130px; height: 130px; border-radius: 50%; border: 4px solid var(--accent); margin-bottom: 20px; object-fit: cover; }
+        input { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid var(--accent); text-align: center; font-size: 16px; margin-bottom: 20px; }
+        .btn-main { background: var(--accent); color: white; border: none; padding: 15px 40px; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .stages-nav { display: flex; width: 100%; max-width: 600px; margin-bottom: 15px; border: 2px solid var(--primary); border-radius: 12px; overflow: hidden; }
+        .stage-item { flex: 1; padding: 10px 5px; font-size: 10px; font-weight: bold; text-align: center; color: var(--primary); border-left: 1px solid #a7f3d0; }
+        .stage-item.current { background: var(--accent); color: white; }
+        .stage-item.done { background: var(--primary); color: white; }
+        .q-card { background: var(--bg); border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 2px dashed var(--primary); font-size: 18px; font-weight: bold; line-height: 1.5; }
+        .btn-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        .btn-opt { background: white; border: 2px solid var(--accent); padding: 15px; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; color: var(--primary); transition: 0.3s; }
+        .correct { background: var(--success) !important; color: white !important; border-color: #047857 !important; }
+        .wrong { background: var(--danger) !important; color: white !important; border-color: #b91c1c !important; }
+        .feedback { color: var(--danger); font-weight: bold; margin-bottom: 15px; font-size: 16px; display: none; background: #fee2e2; padding: 10px; border-radius: 10px; }
+        .footer-identity { padding: 15px; font-size: 14px; color: var(--primary); font-weight: bold; text-align: center; background: #f8fafc; border-top: 2px solid var(--accent); }
+        .screen { display: none; }
+        .active-screen { display: block; }
+        #final-msg { font-size: 20px; font-weight: bold; color: var(--primary); margin: 20px 0; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <audio id="sWelcome" src="https://archive.org/download/correct_202604/welcome.mp3"></audio>
+    <audio id="sCor" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
+    <audio id="sErr" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"></audio>
+    <audio id="vCor" src="https://archive.org/download/correct_202604/correct.mp3"></audio>
+    <audio id="vErr" src="https://archive.org/download/correct_202604/wrong.mp3"></audio>
+
+    <div class="stages-nav" id="stagesNav" style="display:none;">
+        <div class="stage-item" id="t0">صواب/خطأ</div><div class="stage-item" id="t1">بم تفسر</div>
+        <div class="stage-item" id="t2">نتائج</div><div class="stage-item" id="t3">أكمل</div>
+        <div class="stage-item" id="t4">المقصود</div><div class="stage-item" id="t5">من هو</div>
+    </div>
+
+    <div class="main-card">
+        <div class="top-nav-bar">تحدي الحضارة الإسلامية 🕌</div>
+        <div class="content">
+            <div id="scr-1" class="screen active-screen">
+                <img src="https://i.ibb.co/gKFwNMZ/image.png" class="teacher-img">
+                <h3 style="color:var(--primary);">أ. سعيد شعبان</h3>
+                <input type="text" id="uName" placeholder="أدخل اسمك الثلاثي...">
+                <button id="startBtn" class="btn-main">ابدأ التحدي 🏆</button>
+            </div>
+            <div id="scr-2" class="screen">
+                <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--primary); margin-bottom:15px;">
+                    <span id="q-count">السؤال: 1</span><span id="s-val">الدرجة: 0</span>
+                </div>
+                <div class="q-card" id="qText"></div>
+                <div id="feedback" class="feedback"></div>
+                <div class="btn-grid" id="options"></div>
+            </div>
+            <div id="scr-3" class="screen">
+                <div id="final-msg"></div>
+                <button onclick="location.reload()" class="btn-main">إعادة التحدي 🔄</button>
+            </div>
+        </div>
+        <div class="footer-identity">إعداد: أ. سعيد شعبان | 01551625493</div>
+    </div>
+
+<script>
+let score = 0, cur = 0, canAnswer = true, userName = "", startTime;
+const lessonName = "الحضارة الإسلامية";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwZPW9fYT-pqjedH8e81aV9lf5ejc9DZ3AmQo2z78sBC9tIatdRkoGSJngHyOFSZRqPmw/exec";
+
+const quiz = [
+    {q: "ظهر الإسلام في القرن السابع الميلادي وأحدث تحولات جذرية في حياة العرب.", ans: 0, opts: ["صواب", "خطأ"], type: 0, corr: "صواب"},
+    {q: "يُعد عمر بن الخطاب أول الخلفاء الراشدين الذين تولوا الخلافة بعد النبي ﷺ.", ans: 1, opts: ["صواب", "خطأ"], type: 0, corr: "خطأ (التصحيح: أبو بكر الصديق)"},
+    {q: "اتخذت الدولة الأموية من مدينة دمشق عاصمة لها طوال فترة حكمها.", ans: 0, opts: ["صواب", "خطأ"], type: 0, corr: "صواب"},
+    {q: "اعتمد نظام الحكم في عصر الخلفاء الراشدين على مبدأ الشورى.", ans: 0, opts: ["صواب", "خطأ"], type: 0, corr: "صواب"},
+    {q: "تم تحويل نظام الحكم من الشورى إلى الوراثة في عهد الدولة العباسية.", ans: 1, opts: ["صواب", "خطأ"], type: 0, corr: "خطأ (التصحيح: في عهد الدولة الأموية)"},
+    {q: "كفل الإسلام حقوق كافة الفئات في المجتمع وحقق التوازن بينهم.", ans: 0, opts: ["صواب", "خطأ"], type: 0, corr: "صواب"},
+    {q: "برع المسلمون في صناعات متعددة مثل الزجاج والمنسوجات والورق.", ans: 0, opts: ["صواب", "خطأ"], type: 0, corr: "صواب"},
+    {q: "يُعد \"تاج محل\" في الهند جوهرة العمارة في الحضارة الإسلامية.", ans: 0, opts: ["صواب", "خطأ"], type: 0, corr: "صواب"},
+    {q: "بدأت حركة الترجمة في العصر الأموي ووصلت لذروتها في العصر العباسي.", ans: 0, opts: ["صواب", "خطأ"], type: 0, corr: "صواب"},
+    {q: "نقل العباسيون عاصمة الخلافة الإسلامية إلى مدينة القيروان.", ans: 1, opts: ["صواب", "خطأ"], type: 0, corr: "خطأ (التصحيح: إلى مدينة بغداد)"},
+    {q: "اعتبار اللغة العربية ركيزة أساسية للحضارة الإسلامية لأنها:", ans: 0, opts: ["لغة القرآن الكريم وأداة لنقل العلوم", "لغة التجارة فقط", "لغة الحرب", "صعبة التعلم"], type: 1, corr: "لغة القرآن الكريم وأداة لنقل العلوم"},
+    {q: "سقوط الدولة العباسية تاريخياً كان نتيجة لـ:", ans: 1, opts: ["وفرة الموارد", "ضعف الخلفاء وهجمات المغول", "بناء بغداد", "نقص المترجمين"], type: 1, corr: "ضعف الخلفاء وهجمات المغول"},
+    {q: "اهتمام المسلمين ببناء الجسور والسدود على الأنهار من أجل:", ans: 2, opts: ["حماية السفن", "الزينة", "تنظيم شؤون الري والزراعة", "منع صيد الأسماك"], type: 1, corr: "تنظيم شؤون الري والزراعة"},
+    {q: "ازدهار النشاط التجاري في الدولة الإسلامية يرجع لـ:", ans: 3, opts: ["كثرة الفتوحات فقط", "إلغاء الضرائب", "جفاف الأنهار", "أمانة التجار المسلمين وإقامة الأسواق"], type: 1, corr: "أمانة التجار المسلمين وإقامة الأسواق"},
+    {q: "أهمية \"صحيفة المدينة\" التي وضعها الرسول ﷺ تكمن في أنها:", ans: 0, opts: ["أول دستور نظّم العلاقة بين سكان المدينة", "كانت مجرد زينة", "شجعت على الهجرة", "منعت الزراعة"], type: 1, corr: "أول دستور نظّم العلاقة بين سكان المدينة"},
+    {q: "تسمية \"بيت الحكمة\" بهذا الاسم يرجع لكونه:", ans: 3, opts: ["مكاناً للقضاء", "مخزناً للسلاح", "بيتاً للخليفة", "مركزاً عالمياً للعلم والترجمة والبحث"], type: 1, corr: "مركزاً عالمياً للعلم والترجمة والبحث"},
+    {q: "انتشار الإسلام في قارات العالم القديم يرجع بالأساس لـ:", ans: 2, opts: ["القوة العسكرية فقط", "ندرة الموارد", "أخلاق التجار المسلمين وجهود الدعاة", "انغلاق الدولة"], type: 1, corr: "أخلاق التجار المسلمين وجهود الدعاة"},
+    {q: "وصول المسلمين لمكانة علمية رفيعة في العالم يرجع لـ:", ans: 1, opts: ["كثرة الذهب", "حث الإسلام على طلب العلم والبحث والمعرفة", "إهمال الفنون", "ندرة المدارس"], type: 1, corr: "حث الإسلام على طلب العلم والبحث والمعرفة"},
+    {q: "قيام النهضة الأوروبية الحديثة يرجع في أصوله لـ:", ans: 0, opts: ["تأثرهم بعلوم المسلمين وترجمة كتب علمائهم", "الانعزال عن آسيا", "قلة الجامعات", "ترك العلوم"], type: 1, corr: "تأثرهم بعلوم المسلمين وترجمة كتب علمائهم"},
+    {q: "فرض الزكاة في المجتمع الإسلامي كان يهدف لـ:", ans: 3, opts: ["زيادة ثروة الخليفة", "شراء الأسلحة", "بناء القصور", "رعاية الفقراء وتحقيق التكافل الاجتماعي"], type: 1, corr: "رعاية الفقراء وتحقيق التكافل الاجتماعي"},
+    {q: "تمسك المسلمين بالقيم والأخلاق (كالعدل والمساواة) أدى لـ:", ans: 2, opts: ["الصراع الطبقي", "ترك التجارة", "بناء مجتمع قوي وتآلف القلوب", "ضعف الدولة"], type: 2, corr: "بناء مجتمع قوي وتآلف القلوب"},
+    {q: "تعريب الدواوين في عهد الدولة الأموية أدى لـ:", ans: 0, opts: ["أصبحت العربية اللغة الرسمية للإدارة", "انتشار اللاتينية", "توقف العمل", "سقوط الدولة"], type: 2, corr: "أصبحت العربية اللغة الرسمية للإدارة"},
+    {q: "اتساع رقعة الدولة الإسلامية وانفتاحها على الحضارات أدى لـ:", ans: 1, opts: ["الجهل", "ظهور إبداعات في شتى مجالات العلوم والفنون", "انقسام العرب", "الفقر"], type: 2, corr: "ظهور إبداعات في شتى مجالات العلوم والفنون"},
+    {q: "إنشاء \"بيت الحكمة\" في بغداد بالعصر العباسي أدى لـ:", ans: 3, opts: ["تراجع العلم", "نقص الكتب", "هجرة العلماء", "ازدهار حركة الترجمة والبحث العلمي"], type: 2, corr: "ازدهار حركة الترجمة والبحث العلمي"},
+    {q: "ترجمة كتب علماء المسلمين إلى اللغة اللاتينية أدت لـ:", ans: 2, opts: ["ضياع العلوم", "إغلاق المدارس", "أصبحت أساساً في قيام النهضة الأوروبية", "منع السفر"], type: 2, corr: "أصبحت أساساً في قيام النهضة الأوروبية"},
+    {q: "ضعف الخلفاء في أواخر العصر العباسي الثاني أدى لـ:", ans: 0, opts: ["سقوط الخلافة على يد المغول", "قوة الدولة", "بناء عاصمة جديدة", "زيادة الزراعة"], type: 2, corr: "سقوط الخلافة على يد المغول"},
+    {q: "براعة المسلمين في علم الفلك والرياضيات أدت لـ:", ans: 3, opts: ["فشل التجارة", "جفاف الأنهار", "بناء الأهرامات", "تطور العلوم وتفوقهم العالمي فيها"], type: 2, corr: "تطور العلوم وتفوقهم العالمي فيها"},
+    {q: "أمانة التجار المسلمين وصدقهم في البيع والشراء أدى لـ:", ans: 1, opts: ["كره الناس لهم", "دخول شعوب كثيرة في الإسلام", "توقف الملاحة", "غلاء الأسعار"], type: 2, corr: "دخول شعوب كثيرة في الإسلام"},
+    {q: "بناء السدود والقنوات في العصر العباسي أدى لـ:", ans: 2, opts: ["غرق المدن", "جفاف المحاصيل", "زيادة الإنتاج الزراعي واستصلاح الأراضي", "منع التجارة"], type: 2, corr: "زيادة الإنتاج الزراعي واستصلاح الأراضي"},
+    {q: "تمسك المسلمين بالقرآن الكريم وسنة النبي ﷺ أدى لـ:", ans: 0, opts: ["رسوخ عقيدة التوحيد واستقرار المجتمع", "التشتت", "كره العلم", "ضعف الدولة"], type: 2, corr: "رسوخ عقيدة التوحيد واستقرار المجتمع"},
+    {q: "انتقلت الخلافة في عصر الدولة العباسية إلى مدينة:", ans: 1, opts: ["دمشق", "بغداد", "القيروان", "مكة"], type: 3, corr: "بغداد"},
+    {q: "برزت المرأة المسلمة في مجالات عديدة، فكانت ........ عالمة في الفلك.", ans: 0, opts: ["مريم الإسطرلابي", "السيدة عائشة", "الخنساء", "شجرة الدر"], type: 3, corr: "مريم الإسطرلابي"},
+    {q: "بدأ نظام الوراثة في الحكم الإسلامي مع قيام الدولة:", ans: 3, opts: ["الراشدة", "العباسية", "الفاطمية", "الأموية"], type: 3, corr: "الأموية"},
+    {q: "يُعد ........ جوهرة الحضارة الإسلامية في بلاد الهند.", ans: 2, opts: ["المسجد الحرام", "معبد الكرنك", "تاج محل", "سور الصين"], type: 3, corr: "تاج محل"},
+    {q: "تم صك العملة الإسلامية لأول مرة في عهد الدولة:", ans: 0, opts: ["الأموية", "الراشدة", "العباسية", "الأيوبية"], type: 3, corr: "الأموية"},
+    {q: "أحدث ظهور الإسلام تحولات جذرية في حياة العرب في القرن ........ الميلادي.", ans: 1, opts: ["الخامس", "السابع", "السادس", "الثامن"], type: 3, corr: "السابع"},
+    {q: "من أهم إنجازات الخليفة أبي بكر الصديق القضاء على حركة:", ans: 3, opts: ["الترجمة", "الفتوحات", "الصناعة", "الردة"], type: 3, corr: "الردة"},
+    {q: "يرتبط فن ........ الإسلامي بالقباب والمآذن والخط العربي الجميل.", ans: 0, opts: ["العمارة", "النحت", "الفلسفة", "الكيمياء"], type: 3, corr: "العمارة"},
+    {q: "أول دستور مكتوب وضعه الرسول ﷺ في المدينة هو:", ans: 2, opts: ["القوانين المسمارية", "شريعة حمورابي", "صحيفة المدينة", "قانون أورنمو"], type: 3, corr: "صحيفة المدينة"},
+    {q: "برع المسلمون في الطب والصيدلة واستخدموا ........ في العلاج.", ans: 1, opts: ["الآلات الحديثة", "الأعشاب والمواد الطبيعية", "السحر", "الورق فقط"], type: 3, corr: "الأعشاب والمواد الطبيعية"},
+    {q: "نظام حكم ظهر بعد وفاة الرسول ﷺ يتولى فيه الخليفة إدارة الدولة:", ans: 1, opts: ["الديمقراطية", "الخلافة", "الوراثة", "الجمهورية"], type: 4, corr: "الخلافة"},
+    {q: "أول دستور مكتوب نظّم العلاقة بين سكان المدينة من مسلمين وغيرهم:", ans: 0, opts: ["صحيفة المدينة", "الأبجدية", "الكتابة المسمارية", "الزقورات"], type: 4, corr: "صحيفة المدينة"},
+    {q: "الذين رفضوا دفع الزكاة وادعى بعضهم النبوة بعد وفاة الرسول ﷺ:", ans: 3, opts: ["المهاجرون", "الأنصار", "التابعون", "المرتدون"], type: 4, corr: "المرتدون"},
+    {q: "مؤسسة علمية كبرى أنشأها العباسيون ببغداد للبحث والترجمة:", ans: 2, opts: ["الدواوين", "الكتاتيب", "بيت الحكمة", "الأربطة"], type: 4, corr: "بيت الحكمة"},
+    {q: "مبدأ اعتمد عليه الخلفاء الراشدون في إدارة شؤون الدولة:", ans: 1, opts: ["الاستبداد", "الشورى", "الوراثة", "التعيين الإجباري"], type: 4, corr: "الشورى"},
+    {q: "مؤسس الدولة الأموية وجعل دمشق عاصمة لها ووضع نظام الوراثة:", ans: 2, opts: ["هارون الرشيد", "أبو بكر الصديق", "معاوية بن أبي سفيان", "المأمون"], type: 5, corr: "معاوية بن أبي سفيان"},
+    {q: "خليفة عباسي اهتم بالعلم وأسس بيت الحكمة في بغداد:", ans: 0, opts: ["هارون الرشيد", "معاوية بن أبي سفيان", "عمر بن الخطاب", "عثمان بن عفان"], type: 5, corr: "هارون الرشيد"},
+    {q: "عالمة فلك مسلمة برعت في تطوير الإسطرلاب بالعصر العباسي:", ans: 3, opts: ["السيدة عائشة", "السيدة زبيدة", "الخنساء", "مريم الإسطرلابي"], type: 5, corr: "مريم الإسطرلابي"},
+    {q: "أول الخلفاء الراشدين، تولى الخلافة بعد وفاة النبي ﷺ وجمع القرآن:", ans: 1, opts: ["عمر بن الخطاب", "أبو بكر الصديق", "علي بن أبي طالب", "عثمان بن عفان"], type: 5, corr: "أبو بكر الصديق"},
+    {q: "زوجة الخليفة هارون الرشيد التي اهتمت بالعلم والعلماء في العصر العباسي:", ans: 0, opts: ["السيدة زبيدة", "مريم الإسطرلابي", "شجرة الدر", "الخنساء"], type: 5, corr: "السيدة زبيدة"}
+];
+
+const vCor = document.getElementById('vCor'), vErr = document.getElementById('vErr');
+
+document.getElementById('startBtn').onclick = () => {
+    userName = document.getElementById('uName').value;
+    if(userName.length < 3) return alert("أدخل الاسم الثلاثي");
+    startTime = new Date();
+    document.getElementById('sWelcome').play();
+    document.getElementById('scr-1').classList.remove('active-screen');
+    document.getElementById('scr-2').classList.add('active-screen');
+    document.getElementById('stagesNav').style.display = 'flex';
+    loadQ();
+};
+
+function loadQ() {
+    const q = quiz[cur];
+    document.getElementById('qText').innerText = q.q;
+    document.getElementById('feedback').style.display = 'none';
+    document.getElementById('q-count').innerText = "السؤال: " + (cur+1);
+    document.querySelectorAll('.stage-item').forEach((el, i) => {
+        el.className = 'stage-item ' + (i === q.type ? 'current' : i < q.type ? 'done' : '');
+    });
+    const optsDiv = document.getElementById('options');
+    optsDiv.innerHTML = "";
+    let buttons = [];
+    q.opts.forEach((o, i) => {
+        const b = document.createElement('button');
+        b.className = 'btn-opt'; b.innerText = o;
+        b.onclick = () => check(i, b, buttons);
+        optsDiv.appendChild(b);
+        buttons.push(b);
+    });
+}
+
+function check(i, b, btns) {
+    if(!canAnswer) return;
+    canAnswer = false;
+    const feedback = document.getElementById('feedback');
+    if(i === quiz[cur].ans) {
+        score++; b.classList.add('correct');
+        document.getElementById('sCor').play();
+        setTimeout(() => vCor.play(), 300);
+    } else {
+        b.classList.add('wrong');
+        btns[quiz[cur].ans].classList.add('correct');
+        document.getElementById('sErr').play();
+        feedback.innerText = quiz[cur].corr;
+        feedback.style.display = 'block';
+        setTimeout(() => vErr.play(), 300);
+    }
+    document.getElementById('s-val').innerText = "الدرجة: " + score;
+}
+
+function nextQ() {
+    cur++;
+    canAnswer = true;
+    if(cur < quiz.length) loadQ();
+    else sendResult();
+}
+
+function sendResult() {
+    const duration = Math.round((new Date() - startTime) / 1000);
+    const params = new URLSearchParams({name: userName, lesson: lessonName, score: score, duration: duration});
+    fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: params })
+    .then(() => { 
+        document.getElementById('scr-2').classList.remove('active-screen');
+        document.getElementById('scr-3').classList.add('active-screen');
+        document.getElementById('stagesNav').style.display = 'none';
+        
+        let message = "";
+        const percentage = (score / quiz.length) * 100;
+
+        if (percentage >= 85) {
+            message = "أهلاً " + userName + "، ممتاز يا بطل! 🌟 درجتك " + score + " من " + quiz.length + ". أداء رائع يعكس تفوقك، تم إرسالها إلى أ: سعيد شعبان.";
+        } else if (percentage >= 50) {
+            message = "أهلاً " + userName + "، جيد جداً! 👏 حصلت على " + score + " من " + quiz.length + ". راجع أخطاءك لتصبح أفضل، تم إرسالها إلى أ: سعيد شعبان.";
+        } else {
+            message = "أهلاً " + userName + "، تحتاج للمحاولة مرة أخرى! 💪 حصلت على " + score + " من " + quiz.length + ". حاول مجدداً لتتحسن، تم إرسالها إلى أ: سعيد شعبان.";
+        }
+        document.getElementById('final-msg').innerText = message;
+    });
+}
+
+vCor.onended = nextQ;
+vErr.onended = nextQ;
+</script>
+</body>
+</html>
